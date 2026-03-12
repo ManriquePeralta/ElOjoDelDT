@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial | El Ojo del DT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="datos.js"></script> 
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo">👁️ EL OJO DEL DT</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="12-3.html">Fijas de Hoy</a></li>
+            <li><a href="historial.html" class="active">Historial</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero-historial">
+        <h1>BALANCE GENERAL</h1>
+        <p>Transparencia total. El DT no borra las rojas.</p>
+    </header>
+
+    <main class="historial-container">
+        <div class="chart-section">
+            <canvas id="balanceChart"></canvas>
+        </div>
+
+        <div class="list-section" style="max-width: 600px; margin: 0 auto;">
+            <h3 style="color: #d32f2f; margin-bottom: 1rem; text-align: center;">ÚLTIMAS JUGADAS</h3>
+            <ul id="betList" class="bet-list">
+                </ul>
+        </div>
+    </main>
+
+    <footer>
+        <p>El Ojo del DT © 2026. Jugá con responsabilidad.</p>
+    </footer>
+
+<script>
+        // Usamos la variable historialApuestas que viene de datos.js
+        const apuestas = historialApuestas;
+
+        const betList = document.getElementById('betList');
+        const ctx = document.getElementById('balanceChart').getContext('2d');
+        let balanceChart;
+
+        // Formateador de guita (Pesos Argentinos)
+        const formatearPlata = new Intl.NumberFormat('es-AR', { 
+            style: 'currency', 
+            currency: 'ARS',
+            maximumFractionDigits: 0 // Sin centavos para que quede limpio
+        });
+
+        // Renderizar la lista
+        function actualizarLista() {
+            betList.innerHTML = '';
+            // Invertimos el array para que lo más nuevo salga arriba
+            const apuestasInvertidas = [...apuestas].reverse();
+            
+            apuestasInvertidas.forEach(apuesta => {
+                const li = document.createElement('li');
+                const isGanada = apuesta.estado === 'ganada';
+                const inversion = parseFloat(apuesta.inversion);
+                const cuota = parseFloat(apuesta.cuota);
+                
+                // Calculamos el neto de esta boleta
+                let balanceNeto = isGanada ? (inversion * cuota) - inversion : -inversion;
+
+                li.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <span><strong>${apuesta.fecha}</strong> - Cuota: ${apuesta.cuota} | Apostado: ${formatearPlata.format(inversion)}</span>
+                        <span style="font-size: 0.85rem; color: ${isGanada ? '#4CAF50' : '#d32f2f'};">
+                            Balance: ${isGanada ? '+' : ''}${formatearPlata.format(balanceNeto)}
+                        </span>
+                    </div>
+                    <span class="badge-${isGanada ? 'win' : 'loss'}">${isGanada ? 'GANADA' : 'PERDIDA'}</span>
+                `;
+                betList.appendChild(li);
+            });
+        }
+
+        // Renderizar el gráfico
+        function actualizarGrafico() {
+            const balancePorDia = {};
+            
+            apuestas.forEach(ap => {
+                if(!balancePorDia[ap.fecha]) balancePorDia[ap.fecha] = 0;
+                
+                const inversion = parseFloat(ap.inversion);
+                const cuota = parseFloat(ap.cuota);
+
+                // La matemática del DT:
+                // Si gana: Ganancia pura (Inversión x Cuota - Inversión)
+                // Si pierde: Pierde la Inversión entera
+                if(ap.estado === 'ganada') {
+                    balancePorDia[ap.fecha] += (inversion * cuota) - inversion;
+                } else {
+                    balancePorDia[ap.fecha] -= inversion;
+                }
+            });
+
+            const fechas = Object.keys(balancePorDia);
+            const balances = Object.values(balancePorDia);
+            const colores = balances.map(b => b >= 0 ? 'rgba(76, 175, 80, 0.8)' : 'rgba(211, 47, 47, 0.8)');
+
+            if(balanceChart) balanceChart.destroy();
+
+            balanceChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: fechas,
+                    datasets: [{
+                        label: 'Balance Neto Diario ($)',
+                        data: balances,
+                        backgroundColor: colores,
+                        borderColor: '#1a1a1a',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: '#333' }, 
+                            ticks: { 
+                                color: '#ccc',
+                                callback: function(value) {
+                                    return '$' + value;
+                                }
+                            } 
+                        },
+                        x: { grid: { display: false }, ticks: { color: '#ccc' } }
+                    },
+                    plugins: { 
+                        legend: { labels: { color: '#fff' } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) {
+                                        label += formatearPlata.format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        actualizarLista();
+        actualizarGrafico();
+    </script>
+</body>
+</html>

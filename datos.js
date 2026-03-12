@@ -1,0 +1,7 @@
+// datos.js - La Base de Datos del DT
+const historialApuestas = [
+    // Agregamos la "inversion" en pesos (o la moneda que quieras)
+    { fecha: "12/03", cuota: "6.01", inversion: 2000, estado: "" },
+    { fecha: "12/03", cuota: "6.29", inversion: 1500, estado: "" },
+    { fecha: "12/03", cuota: "11.10", inversion: 1500, estado: "" },
+];
