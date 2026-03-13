@@ -46,6 +46,10 @@ body {
     color: #d32f2f;
 }
 
+.nav-links a.active {
+    color: #d32f2f;
+}
+
 /* Menú Desplegable (Dropdown) */
 .dropdown {
     position: relative;
@@ -144,6 +148,47 @@ body {
 .analysis {
     font-size: 0.95rem;
     color: #cccccc;
+}
+
+.bet-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.bet-meta span {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #e0e0e0;
+    background-color: #242424;
+    border: 1px solid #3a3a3a;
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+}
+
+.quick-why {
+    font-size: 0.9rem;
+    color: #ffcc80;
+    margin-bottom: 0.8rem;
+    border-left: 3px solid #ffb300;
+    padding-left: 0.6rem;
+}
+
+.legal-banner {
+    margin: 2rem auto 0;
+    max-width: 1000px;
+    padding: 0 5%;
+}
+
+.legal-banner p {
+    background-color: #121212;
+    border: 1px solid #2f2f2f;
+    border-left: 4px solid #ffb300;
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    color: #d0d0d0;
+    font-size: 0.85rem;
 }
 
 /* Pie de página */
@@ -330,6 +375,45 @@ footer {
     padding: 0 5%;
 }
 
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.kpi-card {
+    background: linear-gradient(135deg, #151515 0%, #1e1e1e 100%);
+    border: 1px solid #2d2d2d;
+    border-radius: 8px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.kpi-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #a6a6a6;
+    font-weight: 700;
+}
+
+.kpi-value {
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: #f4f4f4;
+}
+
+.kpi-value.kpi-positive {
+    color: #4CAF50;
+}
+
+.kpi-value.kpi-negative {
+    color: #d32f2f;
+}
+
 .global-total-card {
     display: flex;
     justify-content: space-between;
@@ -459,6 +543,7 @@ footer {
 
 .badge-win { color: #4CAF50; font-weight: bold; }
 .badge-loss { color: #d32f2f; font-weight: bold; }
+.badge-pending { color: #ffb300; font-weight: bold; }
 
 .btn-danger {
     background-color: transparent;
@@ -475,4 +560,55 @@ footer {
 .btn-danger:hover {
     background-color: #d32f2f;
     color: white;
+}
+
+@media (max-width: 900px) {
+    .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .nav-links {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 0.9rem;
+    }
+
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero p {
+        font-size: 0.98rem;
+    }
+
+    .fijas-container {
+        grid-template-columns: 1fr;
+        padding: 1.5rem 4%;
+        gap: 1.25rem;
+    }
+
+    .bet-card {
+        padding: 1.2rem;
+    }
+
+    .prediction {
+        font-size: 1.15rem;
+    }
+
+    .kpi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-section,
+    .list-section {
+        padding: 1rem;
+    }
 }

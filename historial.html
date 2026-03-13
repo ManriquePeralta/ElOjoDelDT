@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial | El Ojo del DT</title>
+    <meta name="description" content="Historial real de El Ojo del DT: total global, ROI, acierto, ganancias y rendimiento diario acumulado.">
+    <meta name="keywords" content="apuestas, historial apuestas, ROI, futbol, pronosticos, el ojo del dt">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Historial | El Ojo del DT">
+    <meta property="og:description" content="Transparencia total: ganancias, perdidas, pendientes, ROI y balance acumulado.">
+    <meta property="og:image" content="og-cover.svg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Historial | El Ojo del DT">
+    <meta name="twitter:description" content="Seguimiento real del rendimiento del DT con resultados y metricas claras.">
+    <meta name="twitter:image" content="og-cover.svg">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -15,7 +25,7 @@
         <div class="logo">👁️ EL OJO DEL DT</div>
         <ul class="nav-links">
             <li><a href="index.html">Inicio</a></li>
-            <li><a href="12-3.html">Fijas de Hoy</a></li>
+            <li><a href="13-3.html">Fijas de Hoy</a></li>
             <li><a href="historial.html" class="active">Historial</a></li>
         </ul>
     </nav>
@@ -34,8 +44,31 @@
             </div>
         </section>
 
+        <section class="kpi-grid">
+            <article class="kpi-card">
+                <span class="kpi-title">Acierto</span>
+                <strong class="kpi-value" id="kpiAcierto">0%</strong>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-title">ROI (resuelto)</span>
+                <strong class="kpi-value" id="kpiRoi">0%</strong>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-title">Total Apostado</span>
+                <strong class="kpi-value" id="kpiApostado">$0</strong>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-title">Ganancia Neta</span>
+                <strong class="kpi-value" id="kpiNeto">$0</strong>
+            </article>
+        </section>
+
         <div class="chart-section">
             <canvas id="balanceChart"></canvas>
+        </div>
+
+        <div class="chart-section">
+            <canvas id="cumulativeChart"></canvas>
         </div>
 
         <div class="list-section" style="max-width: 600px; margin: 0 auto;">
@@ -44,6 +77,10 @@
                 </ul>
         </div>
     </main>
+
+    <section class="legal-banner">
+        <p><strong>Juego responsable 18+</strong> | Esto es contenido informativo y de entretenimiento, no promesa de ganancia. Aposta con control.</p>
+    </section>
 
     <footer>
         <p>El Ojo del DT © 2026. Jugá con responsabilidad.</p>
@@ -57,8 +94,40 @@
         const globalTotalCard = document.getElementById('globalTotalCard');
         const globalTotalIcon = document.getElementById('globalTotalIcon');
         const globalTotalAmount = document.getElementById('globalTotalAmount');
-        const ctx = document.getElementById('balanceChart').getContext('2d');
+        const kpiAcierto = document.getElementById('kpiAcierto');
+        const kpiRoi = document.getElementById('kpiRoi');
+        const kpiApostado = document.getElementById('kpiApostado');
+        const kpiNeto = document.getElementById('kpiNeto');
+        const balanceCtx = document.getElementById('balanceChart').getContext('2d');
+        const cumulativeCtx = document.getElementById('cumulativeChart').getContext('2d');
         let balanceChart;
+        let cumulativeChart;
+
+        function parsearFecha(fechaTexto) {
+            const [diaStr, mesStr] = fechaTexto.split('/');
+            const dia = parseInt(diaStr, 10);
+            const mes = parseInt(mesStr, 10) - 1;
+            return new Date(new Date().getFullYear(), mes, dia);
+        }
+
+        function ordenarApuestasPorFecha(items) {
+            return [...items].sort((a, b) => parsearFecha(a.fecha) - parsearFecha(b.fecha));
+        }
+
+        function obtenerBalanceApuesta(apuesta) {
+            const inversion = parseFloat(apuesta.inversion);
+            const cuota = parseFloat(apuesta.cuota);
+
+            if (apuesta.estado === 'ganada') {
+                return (inversion * cuota) - inversion;
+            }
+
+            if (apuesta.estado === 'perdida') {
+                return -inversion;
+            }
+
+            return 0;
+        }
 
         // Formateador de guita (Pesos Argentinos)
         const formatearPlata = new Intl.NumberFormat('es-AR', { 
@@ -76,35 +145,54 @@
             apuestasInvertidas.forEach(apuesta => {
                 const li = document.createElement('li');
                 const isGanada = apuesta.estado === 'ganada';
+                const isPerdida = apuesta.estado === 'perdida';
+                const isPendiente = apuesta.estado === 'pendiente';
                 const inversion = parseFloat(apuesta.inversion);
-                const cuota = parseFloat(apuesta.cuota);
-                
-                // Calculamos el neto de esta boleta
-                let balanceNeto = isGanada ? (inversion * cuota) - inversion : -inversion;
+                const balanceNeto = obtenerBalanceApuesta(apuesta);
+                const colorBalance = isGanada ? '#4CAF50' : isPerdida ? '#d32f2f' : '#ffb300';
+                const textoBalance = isPendiente
+                    ? 'Balance: Pendiente'
+                    : `Balance: ${balanceNeto >= 0 ? '+' : '-'}${formatearPlata.format(Math.abs(balanceNeto))}`;
+                const claseBadge = isGanada ? 'win' : isPerdida ? 'loss' : 'pending';
+                const textoBadge = isGanada ? 'GANADA' : isPerdida ? 'PERDIDA' : 'PENDIENTE';
 
                 li.innerHTML = `
                     <div style="display: flex; flex-direction: column; gap: 4px;">
                         <span><strong>${apuesta.fecha}</strong> - Cuota: ${apuesta.cuota} | Apostado: ${formatearPlata.format(inversion)}</span>
-                        <span style="font-size: 0.85rem; color: ${isGanada ? '#4CAF50' : '#d32f2f'};">
-                            Balance: ${isGanada ? '+' : ''}${formatearPlata.format(balanceNeto)}
+                        <span style="font-size: 0.85rem; color: ${colorBalance};">
+                            ${textoBalance}
                         </span>
                     </div>
-                    <span class="badge-${isGanada ? 'win' : 'loss'}">${isGanada ? 'GANADA' : 'PERDIDA'}</span>
+                    <span class="badge-${claseBadge}">${textoBadge}</span>
                 `;
                 betList.appendChild(li);
             });
         }
 
+        function actualizarKpis() {
+            const totalApostado = apuestas.reduce((acc, ap) => acc + parseFloat(ap.inversion), 0);
+            const apuestasResueltas = apuestas.filter(ap => ap.estado === 'ganada' || ap.estado === 'perdida');
+            const totalResueltoApostado = apuestasResueltas.reduce((acc, ap) => acc + parseFloat(ap.inversion), 0);
+            const totalGanadas = apuestasResueltas.filter(ap => ap.estado === 'ganada').length;
+            const gananciaNeta = apuestasResueltas.reduce((acc, ap) => acc + obtenerBalanceApuesta(ap), 0);
+
+            const acierto = apuestasResueltas.length > 0 ? (totalGanadas / apuestasResueltas.length) * 100 : 0;
+            const roi = totalResueltoApostado > 0 ? (gananciaNeta / totalResueltoApostado) * 100 : 0;
+
+            kpiAcierto.textContent = `${acierto.toFixed(1)}%`;
+            kpiRoi.textContent = `${roi >= 0 ? '+' : ''}${roi.toFixed(1)}%`;
+            kpiApostado.textContent = formatearPlata.format(totalApostado);
+            kpiNeto.textContent = `${gananciaNeta >= 0 ? '+' : '-'}${formatearPlata.format(Math.abs(gananciaNeta))}`;
+
+            kpiRoi.classList.toggle('kpi-positive', roi >= 0);
+            kpiRoi.classList.toggle('kpi-negative', roi < 0);
+            kpiNeto.classList.toggle('kpi-positive', gananciaNeta >= 0);
+            kpiNeto.classList.toggle('kpi-negative', gananciaNeta < 0);
+        }
+
         function actualizarTotalGlobal() {
             const totalGlobal = apuestas.reduce((acumulado, ap) => {
-                const inversion = parseFloat(ap.inversion);
-                const cuota = parseFloat(ap.cuota);
-
-                if (ap.estado === 'ganada') {
-                    return acumulado + ((inversion * cuota) - inversion);
-                }
-
-                return acumulado - inversion;
+                return acumulado + obtenerBalanceApuesta(ap);
             }, 0);
 
             globalTotalAmount.textContent = formatearPlata.format(totalGlobal);
@@ -117,21 +205,10 @@
         // Renderizar el gráfico
         function actualizarGrafico() {
             const balancePorDia = {};
-            
-            apuestas.forEach(ap => {
-                if(!balancePorDia[ap.fecha]) balancePorDia[ap.fecha] = 0;
-                
-                const inversion = parseFloat(ap.inversion);
-                const cuota = parseFloat(ap.cuota);
 
-                // La matemática del DT:
-                // Si gana: Ganancia pura (Inversión x Cuota - Inversión)
-                // Si pierde: Pierde la Inversión entera
-                if(ap.estado === 'ganada') {
-                    balancePorDia[ap.fecha] += (inversion * cuota) - inversion;
-                } else {
-                    balancePorDia[ap.fecha] -= inversion;
-                }
+            ordenarApuestasPorFecha(apuestas).forEach(ap => {
+                if(!balancePorDia[ap.fecha]) balancePorDia[ap.fecha] = 0;
+                balancePorDia[ap.fecha] += obtenerBalanceApuesta(ap);
             });
 
             const fechas = Object.keys(balancePorDia);
@@ -140,7 +217,7 @@
 
             if(balanceChart) balanceChart.destroy();
 
-            balanceChart = new Chart(ctx, {
+            balanceChart = new Chart(balanceCtx, {
                 type: 'bar',
                 data: {
                     labels: fechas,
@@ -184,9 +261,66 @@
                     }
                 }
             });
+
+            const balanceAcumulado = [];
+            let acumulado = 0;
+            balances.forEach(balanceDia => {
+                acumulado += balanceDia;
+                balanceAcumulado.push(acumulado);
+            });
+
+            if (cumulativeChart) cumulativeChart.destroy();
+
+            cumulativeChart = new Chart(cumulativeCtx, {
+                type: 'line',
+                data: {
+                    labels: fechas,
+                    datasets: [{
+                        label: 'Bankroll Acumulado ($)',
+                        data: balanceAcumulado,
+                        borderColor: '#ffca28',
+                        backgroundColor: 'rgba(255, 202, 40, 0.25)',
+                        pointBackgroundColor: '#ffca28',
+                        pointBorderColor: '#1a1a1a',
+                        tension: 0.25,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            grid: { color: '#333' },
+                            ticks: {
+                                color: '#ccc',
+                                callback: function(value) {
+                                    return '$' + value;
+                                }
+                            }
+                        },
+                        x: { grid: { display: false }, ticks: { color: '#ccc' } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#fff' } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    if (context.parsed.y !== null) {
+                                        label += formatearPlata.format(context.parsed.y);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         actualizarLista();
+        actualizarKpis();
         actualizarTotalGlobal();
         actualizarGrafico();
     </script>
