@@ -26,6 +26,14 @@
     </header>
 
     <main class="historial-container">
+        <section class="global-total-card" id="globalTotalCard">
+            <span class="global-total-label">TOTAL GLOBAL</span>
+            <div class="global-total-value">
+                <span class="global-total-icon" id="globalTotalIcon">+</span>
+                <strong class="global-total-amount" id="globalTotalAmount">$0</strong>
+            </div>
+        </section>
+
         <div class="chart-section">
             <canvas id="balanceChart"></canvas>
         </div>
@@ -46,6 +54,9 @@
         const apuestas = historialApuestas;
 
         const betList = document.getElementById('betList');
+        const globalTotalCard = document.getElementById('globalTotalCard');
+        const globalTotalIcon = document.getElementById('globalTotalIcon');
+        const globalTotalAmount = document.getElementById('globalTotalAmount');
         const ctx = document.getElementById('balanceChart').getContext('2d');
         let balanceChart;
 
@@ -82,6 +93,25 @@
                 `;
                 betList.appendChild(li);
             });
+        }
+
+        function actualizarTotalGlobal() {
+            const totalGlobal = apuestas.reduce((acumulado, ap) => {
+                const inversion = parseFloat(ap.inversion);
+                const cuota = parseFloat(ap.cuota);
+
+                if (ap.estado === 'ganada') {
+                    return acumulado + ((inversion * cuota) - inversion);
+                }
+
+                return acumulado - inversion;
+            }, 0);
+
+            globalTotalAmount.textContent = formatearPlata.format(totalGlobal);
+
+            globalTotalCard.classList.remove('total-positive', 'total-negative');
+            globalTotalCard.classList.add(totalGlobal >= 0 ? 'total-positive' : 'total-negative');
+            globalTotalIcon.textContent = totalGlobal >= 0 ? '+' : '-';
         }
 
         // Renderizar el gráfico
@@ -157,6 +187,7 @@
         }
 
         actualizarLista();
+        actualizarTotalGlobal();
         actualizarGrafico();
     </script>
 </body>

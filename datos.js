@@ -4,4 +4,5 @@ const historialApuestas = [
     { fecha: "12/03", cuota: "6.01", inversion: 2000, estado: "" },
     { fecha: "12/03", cuota: "6.29", inversion: 1500, estado: "" },
     { fecha: "12/03", cuota: "11.10", inversion: 1500, estado: "" },
+    { fecha: "13/03", cuota: "8.98", inversion: 2000, estado: "ganada" },
 ];

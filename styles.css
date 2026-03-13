@@ -330,6 +330,73 @@ footer {
     padding: 0 5%;
 }
 
+.global-total-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    background: linear-gradient(135deg, #141414 0%, #1f1f1f 100%);
+    border: 1px solid #2e2e2e;
+    border-left: 5px solid #4CAF50;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.global-total-label {
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    color: #bdbdbd;
+    font-weight: 700;
+}
+
+.global-total-value {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.global-total-icon {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1rem;
+    font-weight: 900;
+    border: 1px solid currentColor;
+}
+
+.global-total-amount {
+    font-size: 1.4rem;
+    font-weight: 900;
+}
+
+.global-total-card.total-positive {
+    border-left-color: #4CAF50;
+}
+
+.global-total-card.total-positive .global-total-amount {
+    color: #4CAF50;
+}
+
+.global-total-card.total-positive .global-total-icon {
+    color: #4CAF50;
+}
+
+.global-total-card.total-negative {
+    border-left-color: #d32f2f;
+}
+
+.global-total-card.total-negative .global-total-amount {
+    color: #d32f2f;
+}
+
+.global-total-card.total-negative .global-total-icon {
+    color: #d32f2f;
+}
+
 .chart-section {
     background-color: #1a1a1a;
     padding: 1.5rem;
@@ -347,6 +414,11 @@ footer {
 @media (max-width: 768px) {
     .dashboard-grid {
         grid-template-columns: 1fr;
+    }
+
+    .global-total-card {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 
