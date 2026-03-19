@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Ojo del DT | Fijas</title>
+    <meta name="description" content="Todas las fijas por fecha con estado rapido: ganado, perdida o pendiente.">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="datos.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">👁️ EL OJO DEL DT</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="fijas.html" class="active">Fijas</a></li>
+            <li><a href="historial.html">Historial</a></li>
+        </ul>
+    </nav>
+
+    <header class="hero hero-fijas-index">
+        <h1>Radar de Fijas</h1>
+        <p>Scouting diario con estado, valor esperado y acceso rapido por fecha.</p>
+    </header>
+
+    <main class="fijas-index-page">
+        <section class="fijas-kpi-grid" id="fijasKpiGrid">
+            <article class="fijas-kpi-card">
+                <span class="fijas-kpi-title">Yield Global</span>
+                <strong class="fijas-kpi-value" id="kpiYield">--</strong>
+            </article>
+            <article class="fijas-kpi-card">
+                <span class="fijas-kpi-title">Acierto Resuelto</span>
+                <strong class="fijas-kpi-value" id="kpiHitRate">--</strong>
+            </article>
+            <article class="fijas-kpi-card">
+                <span class="fijas-kpi-title">Cuota Media</span>
+                <strong class="fijas-kpi-value" id="kpiAvgOdds">--</strong>
+            </article>
+            <article class="fijas-kpi-card">
+                <span class="fijas-kpi-title">Picks Totales</span>
+                <strong class="fijas-kpi-value" id="kpiTotalPicks">--</strong>
+            </article>
+        </section>
+
+        <section class="fijas-index-container" id="dayCardsContainer">
+        </section>
+    </main>
+
+    <section class="legal-banner">
+        <p><strong>Juego responsable 18+</strong> | Esto es contenido informativo y de entretenimiento, no promesa de ganancia. Aposta con control.</p>
+    </section>
+
+    <footer>
+        <p>El Ojo del DT © 2026. Juga con responsabilidad.</p>
+    </footer>
+
+    <script src="fijas.js"></script>
+</body>
+</html>

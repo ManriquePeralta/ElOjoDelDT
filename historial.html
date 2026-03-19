@@ -17,27 +17,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="datos.js"></script> 
+    <script src="datos.js"></script>
+    <script>
+        // Cargar tema antes de renderizar para evitar flash
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
 </head>
-<body>
+<body class="historial-page">
 
     <nav class="navbar">
         <div class="logo">👁️ EL OJO DEL DT</div>
         <ul class="nav-links">
             <li><a href="index.html">Inicio</a></li>
-            <li><a href="13-3.html">Fijas de Hoy</a></li>
+            <li><a href="fijas.html">Fijas</a></li>
             <li><a href="historial.html" class="active">Historial</a></li>
+            <li><button id="themeToggle" class="theme-toggle" title="Cambiar tema">🌙</button></li>
         </ul>
     </nav>
 
     <header class="hero-historial">
-        <h1>BALANCE GENERAL</h1>
-        <p>Transparencia total. El DT no borra las rojas.</p>
+        <h1>Cuartel de Rendimiento</h1>
+        <p>Bitacora completa del proyecto: trazabilidad, volumen y resultado real jornada por jornada.</p>
     </header>
 
     <main class="historial-container">
+        <section class="historial-intro-strip">
+            <span class="strip-dot"></span>
+            <p>Panel operacional con datos cerrados y pendientes, curvas de resultado y exploracion de escenarios.</p>
+        </section>
+
         <section class="global-total-card" id="globalTotalCard">
-            <span class="global-total-label">TOTAL GLOBAL</span>
+            <span class="global-total-label">BALANCE OPERATIVO</span>
             <div class="global-total-value">
                 <span class="global-total-icon" id="globalTotalIcon">+</span>
                 <strong class="global-total-amount" id="globalTotalAmount">$0</strong>
@@ -46,19 +59,19 @@
 
         <section class="kpi-grid">
             <article class="kpi-card">
-                <span class="kpi-title">Acierto</span>
+                <span class="kpi-title">Partidas Cerradas</span>
                 <strong class="kpi-value" id="kpiAcierto">0%</strong>
             </article>
             <article class="kpi-card">
-                <span class="kpi-title">ROI (resuelto)</span>
+                <span class="kpi-title">Tickets Abiertos</span>
                 <strong class="kpi-value" id="kpiRoi">0%</strong>
             </article>
             <article class="kpi-card">
-                <span class="kpi-title">Total Apostado</span>
+                <span class="kpi-title">Capital Expuesto</span>
                 <strong class="kpi-value" id="kpiApostado">$0</strong>
             </article>
             <article class="kpi-card">
-                <span class="kpi-title">Ganancia Neta</span>
+                <span class="kpi-title">Resultado Neto</span>
                 <strong class="kpi-value" id="kpiNeto">$0</strong>
             </article>
         </section>
@@ -71,10 +84,102 @@
             <canvas id="cumulativeChart"></canvas>
         </div>
 
-        <div class="list-section" style="max-width: 600px; margin: 0 auto;">
-            <h3 style="color: #d32f2f; margin-bottom: 1rem; text-align: center;">ÚLTIMAS JUGADAS</h3>
-            <ul id="betList" class="bet-list">
-                </ul>
+        <!-- ANÁLISIS AVANZADO -->
+        <section class="advanced-analysis">
+            <h2>Centro de Control</h2>
+            <div class="tabs-container">
+                <button class="tab-btn active" data-tab="tendencias">Ritmo Diario</button>
+                <button class="tab-btn" data-tab="comparativa">Mapa de Cuotas</button>
+                <button class="tab-btn" data-tab="calculadora">Gestor de Unidades</button>
+                <button class="tab-btn" data-tab="kelly">Modelo Kelly</button>
+                <button class="tab-btn" data-tab="proyecciones">Simulador</button>
+            </div>
+
+            <!-- TAB 1: TENDENCIAS -->
+            <div id="tendencias" class="tab-content active">
+                <h3>Rendimiento por Fecha</h3>
+                <div id="tendenciasGrid" class="tendencias-grid"></div>
+            </div>
+
+            <!-- TAB 2: COMPARATIVA -->
+            <div id="comparativa" class="tab-content">
+                <h3>Análisis de Cuotas</h3>
+                <div id="comparativaGrid" class="comparativa-grid"></div>
+            </div>
+
+            <!-- TAB 3: CALCULADORA -->
+            <div id="calculadora" class="tab-content">
+                <h3>Calculadora de Unidades</h3>
+                <div class="calculator-container">
+                    <div class="calc-input">
+                        <label>Capital Inicial ($)</label>
+                        <input type="number" id="capitalInicial" placeholder="10000" value="10000">
+                    </div>
+                    <div class="calc-input">
+                        <label>% de Riesgo por Apuesta</label>
+                        <input type="number" id="riskPercent" placeholder="2" value="2" min="0.5" max="10" step="0.5">
+                    </div>
+                    <button id="calcButton" class="btn-calculate">Calcular</button>
+                    <div id="calcResults" class="calc-results"></div>
+                </div>
+            </div>
+
+            <!-- TAB 4: KELLY CRITERION -->
+            <div id="kelly" class="tab-content">
+                <h3>Kelly Criterion - Stake Óptimo</h3>
+                <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 1rem;">f* = (bp - q) / b, donde p=probabilidad ganancia, q=probabilidad pérdida, b=cuota-1</p>
+                <div id="kellyGrid" class="kelly-grid"></div>
+                <div id="kellyResults" class="kelly-results"></div>
+            </div>
+
+            <!-- TAB 5: PROYECCIONES -->
+            <div id="proyecciones" class="tab-content">
+                <h3>Simulador de Ganancias</h3>
+                <div class="projection-container">
+                    <div class="proj-input">
+                        <label>Capital Inicial ($)</label>
+                        <input type="number" id="projCapital" placeholder="10000" value="10000">
+                    </div>
+                    <div class="proj-input">
+                        <label>Meses a Proyectar</label>
+                        <input type="number" id="projMonths" placeholder="6" value="6" min="1" max="24">
+                    </div>
+                    <button id="projButton" class="btn-calculate">Simular</button>
+                    <div id="projResults" class="proj-results"></div>
+                </div>
+                <div id="projChart" style="margin-top: 1.5rem;">
+                    <canvas id="projectionChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <div class="list-section" style="max-width: 100%; margin: 0 auto;">
+            <h3 style="color: #d32f2f; margin-bottom: 1rem; text-align: center;">Libro de Operaciones</h3>
+            <div class="table-wrapper">
+                <table id="betsTable" class="bets-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Cuota</th>
+                            <th>Apostado</th>
+                            <th>Balance</th>
+                            <th>Estado</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="betsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MODAL PARA DETALLES -->
+        <div id="detailsModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3 id="modalTitle">Detalles de la Apuesta</h3>
+                <div id="modalBody" class="modal-body"></div>
+            </div>
         </div>
     </main>
 
@@ -87,242 +192,583 @@
     </footer>
 
 <script>
-        // Usamos la variable historialApuestas que viene de datos.js
-        const apuestas = historialApuestas;
+    // ===== TEMA OSCURO/CLARO =====
+    const themeToggle = document.getElementById('themeToggle');
+    const htmlElement = document.documentElement;
+    
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = htmlElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        htmlElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    });
 
-        const betList = document.getElementById('betList');
-        const globalTotalCard = document.getElementById('globalTotalCard');
-        const globalTotalIcon = document.getElementById('globalTotalIcon');
-        const globalTotalAmount = document.getElementById('globalTotalAmount');
-        const kpiAcierto = document.getElementById('kpiAcierto');
-        const kpiRoi = document.getElementById('kpiRoi');
-        const kpiApostado = document.getElementById('kpiApostado');
-        const kpiNeto = document.getElementById('kpiNeto');
-        const balanceCtx = document.getElementById('balanceChart').getContext('2d');
-        const cumulativeCtx = document.getElementById('cumulativeChart').getContext('2d');
-        let balanceChart;
-        let cumulativeChart;
+    // Actualizar el icono inicial
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
 
-        function parsearFecha(fechaTexto) {
-            const [diaStr, mesStr] = fechaTexto.split('/');
-            const dia = parseInt(diaStr, 10);
-            const mes = parseInt(mesStr, 10) - 1;
-            return new Date(new Date().getFullYear(), mes, dia);
+    // ===== DATOS E INICIALIZACIÓN =====
+    const apuestas = historialApuestas;
+    const betsTableBody = document.getElementById('betsTableBody');
+    const globalTotalCard = document.getElementById('globalTotalCard');
+    const globalTotalIcon = document.getElementById('globalTotalIcon');
+    const globalTotalAmount = document.getElementById('globalTotalAmount');
+    const kpiAcierto = document.getElementById('kpiAcierto');
+    const kpiRoi = document.getElementById('kpiRoi');
+    const kpiApostado = document.getElementById('kpiApostado');
+    const kpiNeto = document.getElementById('kpiNeto');
+    const balanceCtx = document.getElementById('balanceChart').getContext('2d');
+    const cumulativeCtx = document.getElementById('cumulativeChart').getContext('2d');
+    let balanceChart;
+    let cumulativeChart;
+    let projectionChart;
+
+    const formatearPlata = new Intl.NumberFormat('es-AR', { 
+        style: 'currency', 
+        currency: 'ARS',
+        maximumFractionDigits: 0
+    });
+
+    function parsearFecha(fechaTexto) {
+        const [diaStr, mesStr] = fechaTexto.split('/');
+        const dia = parseInt(diaStr, 10);
+        const mes = parseInt(mesStr, 10) - 1;
+        return new Date(new Date().getFullYear(), mes, dia);
+    }
+
+    function ordenarApuestasPorFecha(items, descendente = false) {
+        const apuestasOrdenadas = [...items].sort((a, b) => parsearFecha(a.fecha) - parsearFecha(b.fecha));
+        return descendente ? apuestasOrdenadas.reverse() : apuestasOrdenadas;
+    }
+
+    function obtenerBalanceApuesta(apuesta) {
+        const inversion = parseFloat(apuesta.inversion);
+        const cuota = parseFloat(apuesta.cuota);
+        if (apuesta.estado === 'ganada') {
+            return (inversion * cuota) - inversion;
         }
-
-        function ordenarApuestasPorFecha(items) {
-            return [...items].sort((a, b) => parsearFecha(a.fecha) - parsearFecha(b.fecha));
+        if (apuesta.estado === 'perdida') {
+            return -inversion;
         }
+        return 0;
+    }
 
-        function obtenerBalanceApuesta(apuesta) {
+    // ===== TABLA INTERACTIVA =====
+    function actualizarTabla() {
+        betsTableBody.innerHTML = '';
+        const apuestasOrdenadas = ordenarApuestasPorFecha(apuestas, true);
+        
+        apuestasOrdenadas.forEach((apuesta, idx) => {
+            const tr = document.createElement('tr');
             const inversion = parseFloat(apuesta.inversion);
-            const cuota = parseFloat(apuesta.cuota);
+            const balance = obtenerBalanceApuesta(apuesta);
+            const claseBadge = apuesta.estado === 'ganada' ? 'win' : apuesta.estado === 'perdida' ? 'loss' : 'pending';
+            const textoBadge = apuesta.estado === 'ganada' ? '✓ GANADA' : apuesta.estado === 'perdida' ? '✗ PERDIDA' : '◐ PENDIENTE';
+            const balanceText = apuesta.estado === 'pendiente' ? 'Pendiente' : `${balance >= 0 ? '+' : ''}${formatearPlata.format(balance)}`;
 
-            if (apuesta.estado === 'ganada') {
-                return (inversion * cuota) - inversion;
-            }
-
-            if (apuesta.estado === 'perdida') {
-                return -inversion;
-            }
-
-            return 0;
-        }
-
-        // Formateador de guita (Pesos Argentinos)
-        const formatearPlata = new Intl.NumberFormat('es-AR', { 
-            style: 'currency', 
-            currency: 'ARS',
-            maximumFractionDigits: 0 // Sin centavos para que quede limpio
+            tr.innerHTML = `
+                <td>${apuesta.fecha}</td>
+                <td>${apuesta.cuota}</td>
+                <td>${formatearPlata.format(inversion)}</td>
+                <td style="color: ${balance >= 0 ? '#4CAF50' : balance < 0 ? '#d32f2f' : '#ffb300'}">${balanceText}</td>
+                <td><span class="badge-${claseBadge}">${textoBadge}</span></td>
+                <td><button class="detail-btn" data-idx="${idx}">👁️</button></td>
+            `;
+            betsTableBody.appendChild(tr);
         });
 
-        // Renderizar la lista
-        function actualizarLista() {
-            betList.innerHTML = '';
-            // Invertimos el array para que lo más nuevo salga arriba
-            const apuestasInvertidas = [...apuestas].reverse();
-            
-            apuestasInvertidas.forEach(apuesta => {
-                const li = document.createElement('li');
-                const isGanada = apuesta.estado === 'ganada';
-                const isPerdida = apuesta.estado === 'perdida';
-                const isPendiente = apuesta.estado === 'pendiente';
-                const inversion = parseFloat(apuesta.inversion);
-                const balanceNeto = obtenerBalanceApuesta(apuesta);
-                const colorBalance = isGanada ? '#4CAF50' : isPerdida ? '#d32f2f' : '#ffb300';
-                const textoBalance = isPendiente
-                    ? 'Balance: Pendiente'
-                    : `Balance: ${balanceNeto >= 0 ? '+' : '-'}${formatearPlata.format(Math.abs(balanceNeto))}`;
-                const claseBadge = isGanada ? 'win' : isPerdida ? 'loss' : 'pending';
-                const textoBadge = isGanada ? 'GANADA' : isPerdida ? 'PERDIDA' : 'PENDIENTE';
-
-                li.innerHTML = `
-                    <div style="display: flex; flex-direction: column; gap: 4px;">
-                        <span><strong>${apuesta.fecha}</strong> - Cuota: ${apuesta.cuota} | Apostado: ${formatearPlata.format(inversion)}</span>
-                        <span style="font-size: 0.85rem; color: ${colorBalance};">
-                            ${textoBalance}
-                        </span>
-                    </div>
-                    <span class="badge-${claseBadge}">${textoBadge}</span>
-                `;
-                betList.appendChild(li);
+        // Event listeners para detalle
+        document.querySelectorAll('.detail-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.target.dataset.idx);
+                mostrarDetalles(idx);
             });
+        });
+    }
+
+    function mostrarDetalles(idx) {
+        const apuesta = ordenarApuestasPorFecha(apuestas, true)[idx];
+        const modal = document.getElementById('detailsModal');
+        const modalBody = document.getElementById('modalBody');
+        const inversion = parseFloat(apuesta.inversion);
+        const cuota = parseFloat(apuesta.cuota);
+        const balance = obtenerBalanceApuesta(apuesta);
+
+        let ganancias = 0;
+        if (apuesta.estado === 'ganada') {
+            ganancias = inversion * cuota;
         }
 
-        function actualizarKpis() {
-            const totalApostado = apuestas.reduce((acc, ap) => acc + parseFloat(ap.inversion), 0);
-            const apuestasResueltas = apuestas.filter(ap => ap.estado === 'ganada' || ap.estado === 'perdida');
-            const totalResueltoApostado = apuestasResueltas.reduce((acc, ap) => acc + parseFloat(ap.inversion), 0);
-            const totalGanadas = apuestasResueltas.filter(ap => ap.estado === 'ganada').length;
-            const gananciaNeta = apuestasResueltas.reduce((acc, ap) => acc + obtenerBalanceApuesta(ap), 0);
+        modalBody.innerHTML = `
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Fecha</span>
+                    <span class="detail-value">${apuesta.fecha}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Cuota</span>
+                    <span class="detail-value">${cuota}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Inversión</span>
+                    <span class="detail-value">${formatearPlata.format(inversion)}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Estado</span>
+                    <span class="detail-value">${apuesta.estado.toUpperCase()}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Ganancia Potencial</span>
+                    <span class="detail-value">${formatearPlata.format(ganancias)}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Balance Neto</span>
+                    <span class="detail-value" style="color: ${balance >= 0 ? '#4CAF50' : '#d32f2f'}">${balance >= 0 ? '+' : ''}${formatearPlata.format(balance)}</span>
+                </div>
+            </div>
+        `;
+        modal.style.display = 'block';
+    }
 
-            const acierto = apuestasResueltas.length > 0 ? (totalGanadas / apuestasResueltas.length) * 100 : 0;
-            const roi = totalResueltoApostado > 0 ? (gananciaNeta / totalResueltoApostado) * 100 : 0;
+    document.querySelector('.close').addEventListener('click', () => {
+        document.getElementById('detailsModal').style.display = 'none';
+    });
 
-            kpiAcierto.textContent = `${acierto.toFixed(1)}%`;
-            kpiRoi.textContent = `${roi >= 0 ? '+' : ''}${roi.toFixed(1)}%`;
-            kpiApostado.textContent = formatearPlata.format(totalApostado);
-            kpiNeto.textContent = `${gananciaNeta >= 0 ? '+' : '-'}${formatearPlata.format(Math.abs(gananciaNeta))}`;
+    window.addEventListener('click', (e) => {
+        const modal = document.getElementById('detailsModal');
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 
-            kpiRoi.classList.toggle('kpi-positive', roi >= 0);
-            kpiRoi.classList.toggle('kpi-negative', roi < 0);
-            kpiNeto.classList.toggle('kpi-positive', gananciaNeta >= 0);
-            kpiNeto.classList.toggle('kpi-negative', gananciaNeta < 0);
+    // ===== ANÁLISIS DE TENDENCIAS =====
+    function actualizarTendencias() {
+        const tendenciasGrid = document.getElementById('tendenciasGrid');
+        const balancePorFecha = {};
+        const apuestasPorFecha = {};
+
+        apuestas.forEach(ap => {
+            if (!balancePorFecha[ap.fecha]) {
+                balancePorFecha[ap.fecha] = 0;
+                apuestasPorFecha[ap.fecha] = [];
+            }
+            balancePorFecha[ap.fecha] += obtenerBalanceApuesta(ap);
+            apuestasPorFecha[ap.fecha].push(ap);
+        });
+
+        const fechasOrdenadas = Object.keys(balancePorFecha).sort((a, b) => {
+            return parsearFecha(a) - parsearFecha(b);
+        });
+
+        tendenciasGrid.innerHTML = '';
+        fechasOrdenadas.forEach(fecha => {
+            const balance = balancePorFecha[fecha];
+            const apuestasDia = apuestasPorFecha[fecha];
+            const ganadas = apuestasDia.filter(a => a.estado === 'ganada').length;
+            const acierto = apuestasDia.length > 0 ? (ganadas / apuestasDia.length) * 100 : 0;
+            const pendientes = apuestasDia.filter(a => a.estado === 'pendiente').length;
+
+            const card = document.createElement('div');
+            card.className = 'trend-card';
+            card.innerHTML = `
+                <div style="font-weight: bold; font-size: 1.1rem; margin-bottom: 0.5rem;">${fecha}</div>
+                <div style="font-size: 0.85rem; color: #aaa;">Apuestas: ${apuestasDia.length}</div>
+                <div style="font-size: 0.85rem; color: #aaa;">Cierre: ${acierto.toFixed(1)}% | Pend: ${pendientes}</div>
+                <div style="font-size: 1rem; font-weight: bold; margin-top: 0.5rem; color: ${balance >= 0 ? '#4CAF50' : '#d32f2f'};">
+                    ${balance >= 0 ? '+' : ''}${formatearPlata.format(balance)}
+                </div>
+            `;
+            tendenciasGrid.appendChild(card);
+        });
+    }
+
+    // ===== ANÁLISIS DE COMPARATIVA =====
+    function actualizarComparativa() {
+        const comparativaGrid = document.getElementById('comparativaGrid');
+        const rangos = {
+            'Baja (1.0-1.5)': { min: 1.0, max: 1.5, apuestas: [] },
+            'Media-Baja (1.5-2.0)': { min: 1.51, max: 2.0, apuestas: [] },
+            'Media (2.0-3.0)': { min: 2.01, max: 3.0, apuestas: [] },
+            'Media-Alta (3.0-5.0)': { min: 3.01, max: 5.0, apuestas: [] },
+            'Alta (5.0+)': { min: 5.01, max: Infinity, apuestas: [] }
+        };
+
+        apuestas.forEach(ap => {
+            const cuota = parseFloat(ap.cuota);
+            for (const [rango, datos] of Object.entries(rangos)) {
+                if (cuota >= datos.min && cuota < datos.max) {
+                    datos.apuestas.push(ap);
+                    break;
+                }
+            }
+        });
+
+        comparativaGrid.innerHTML = '';
+        for (const [rango, datos] of Object.entries(rangos)) {
+            const list = datos.apuestas;
+            if (list.length === 0) continue;
+
+            const ganadas = list.filter(a => a.estado === 'ganada').length;
+            const acierto = (ganadas / list.length) * 100;
+            const gananciaNeta = list.reduce((acc, a) => acc + obtenerBalanceApuesta(a), 0);
+
+            const card = document.createElement('div');
+            card.className = 'trend-card';
+            card.innerHTML = `
+                <div style="font-weight: bold; font-size: 1.05rem; margin-bottom: 0.5rem;">${rango}</div>
+                <div style="font-size: 0.85rem; color: #aaa;">Total: ${list.length}</div>
+                <div style="font-size: 0.85rem; color: #aaa;">Ganadas: ${ganadas}</div>
+                <div style="font-size: 0.85rem; color: #aaa;">Conversion: ${acierto.toFixed(1)}%</div>
+                <div style="font-size: 0.9rem; font-weight: bold; margin-top: 0.5rem; color: ${gananciaNeta >= 0 ? '#4CAF50' : '#d32f2f'};">
+                    ${gananciaNeta >= 0 ? '+' : ''}${formatearPlata.format(gananciaNeta)}
+                </div>
+            `;
+            comparativaGrid.appendChild(card);
+        }
+    }
+
+    // ===== CALCULADORA DE UNIDADES =====
+    document.getElementById('calcButton').addEventListener('click', () => {
+        const capital = parseFloat(document.getElementById('capitalInicial').value);
+        const riskPercent = parseFloat(document.getElementById('riskPercent').value);
+        
+        if (!capital || !riskPercent) {
+            alert('Completa los valores');
+            return;
         }
 
-        function actualizarTotalGlobal() {
-            const totalGlobal = apuestas.reduce((acumulado, ap) => {
-                return acumulado + obtenerBalanceApuesta(ap);
-            }, 0);
+        const riskAmount = (capital * riskPercent) / 100;
+        const unidad = riskAmount / 10; // Dividimos en 10 unidades base
 
-            globalTotalAmount.textContent = formatearPlata.format(totalGlobal);
+        const resultsDiv = document.getElementById('calcResults');
+        resultsDiv.innerHTML = `
+            <div class="calc-result">
+                <div class="result-row">
+                    <span>Riesgo por Apuesta:</span>
+                    <strong>${formatearPlata.format(riskAmount)}</strong>
+                </div>
+                <div class="result-row">
+                    <span>1 Unidad = </span>
+                    <strong>${formatearPlata.format(unidad)}</strong>
+                </div>
+                <div class="result-row" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #333;">
+                    <span>Recomendación por Apuesta:</span>
+                    <strong>${formatearPlata.format(riskAmount)}</strong>
+                </div>
+                <p style="color: #888; font-size: 0.85rem; margin-top: 0.8rem;">
+                    💡 Apuesta máx recomendada: nunca más del ${riskPercent}% de tu capital
+                </p>
+            </div>
+        `;
+    });
 
-            globalTotalCard.classList.remove('total-positive', 'total-negative');
-            globalTotalCard.classList.add(totalGlobal >= 0 ? 'total-positive' : 'total-negative');
-            globalTotalIcon.textContent = totalGlobal >= 0 ? '+' : '-';
+    // ===== KELLY CRITERION =====
+    function actualizarKelly() {
+        const kellyGrid = document.getElementById('kellyGrid');
+        const totalApostado = apuestas.reduce((acc, ap) => acc + parseFloat(ap.inversion), 0);
+        const apuestasResueltas = apuestas.filter(ap => ap.estado === 'ganada' || ap.estado === 'perdida');
+        
+        if (apuestasResueltas.length === 0) {
+            kellyGrid.innerHTML = '<p style="color: #aaa;">No hay datos suficientes para calcular Kelly Criterion</p>';
+            return;
         }
 
-        // Renderizar el gráfico
-        function actualizarGrafico() {
-            const balancePorDia = {};
+        const totalGanadas = apuestasResueltas.filter(ap => ap.estado === 'ganada').length;
+        const winRate = totalGanadas / apuestasResueltas.length;
+        const loseRate = 1 - winRate;
 
-            ordenarApuestasPorFecha(apuestas).forEach(ap => {
-                if(!balancePorDia[ap.fecha]) balancePorDia[ap.fecha] = 0;
-                balancePorDia[ap.fecha] += obtenerBalanceApuesta(ap);
-            });
+        const totalGanancias = apuestasResueltas.filter(ap => ap.estado === 'ganada').reduce((acc, ap) => {
+            return acc + (parseFloat(ap.inversion) * parseFloat(ap.cuota));
+        }, 0);
+        const totalInvertido = apuestasResueltas.reduce((acc, ap) => acc + parseFloat(ap.inversion), 0);
 
-            const fechas = Object.keys(balancePorDia);
-            const balances = Object.values(balancePorDia);
-            const colores = balances.map(b => b >= 0 ? 'rgba(76, 175, 80, 0.8)' : 'rgba(211, 47, 47, 0.8)');
+        const avgOdds = totalGanancias / totalInvertido;
+        const b = avgOdds - 1;
 
-            if(balanceChart) balanceChart.destroy();
+        const kellyCriterion = (winRate * b - loseRate) / b;
+        const kellySafe = kellyCriterion / 2; // Kelly fraccionado al 50%
 
-            balanceChart = new Chart(balanceCtx, {
-                type: 'bar',
-                data: {
-                    labels: fechas,
-                    datasets: [{
-                        label: 'Balance Neto Diario ($)',
-                        data: balances,
-                        backgroundColor: colores,
-                        borderColor: '#1a1a1a',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: '#333' }, 
-                            ticks: { 
-                                color: '#ccc',
-                                callback: function(value) {
-                                    return '$' + value;
-                                }
-                            } 
-                        },
-                        x: { grid: { display: false }, ticks: { color: '#ccc' } }
+        const resultsDiv = document.getElementById('kellyResults');
+        resultsDiv.innerHTML = `
+            <div class="kelly-result">
+                <div class="result-item">
+                    <span>Win Rate:</span>
+                    <strong>${(winRate * 100).toFixed(1)}%</strong>
+                </div>
+                <div class="result-item">
+                    <span>Promedio de Cuota:</span>
+                    <strong>${avgOdds.toFixed(2)}</strong>
+                </div>
+                <div class="result-item">
+                    <span>Kelly Criterion (100%):</span>
+                    <strong style="color: ${kellyCriterion > 0 ? '#4CAF50' : '#d32f2f'}">${(kellyCriterion * 100).toFixed(2)}%</strong>
+                </div>
+                <div class="result-item" style="border-top: 1px solid #333; padding-top: 0.8rem; margin-top: 0.8rem;">
+                    <span>Kelly Seguro (50%):</span>
+                    <strong style="color: #ffb300">${(kellySafe * 100).toFixed(2)}%</strong>
+                </div>
+                <p style="color: #888; font-size: 0.85rem; margin-top: 0.8rem;">
+                    💡 Restas riesgo si usas Kelly al 50%. Es más conservador pero más seguro.
+                </p>
+            </div>
+        `;
+    }
+
+    // ===== PROYECCIONES =====
+    document.getElementById('projButton').addEventListener('click', () => {
+        const capital = parseFloat(document.getElementById('projCapital').value);
+        const months = parseInt(document.getElementById('projMonths').value);
+
+        if (!capital || !months) {
+            alert('Completa los valores');
+            return;
+        }
+
+        const apuestasResueltas = apuestas.filter(ap => ap.estado === 'ganada' || ap.estado === 'perdida');
+        const totalGanancias = apuestasResueltas.reduce((acc, ap) => acc + obtenerBalanceApuesta(ap), 0);
+        const roiMensual = apuestasResueltas.length > 0 ? totalGanancias / apuestasResueltas.reduce((acc, ap) => acc + parseFloat(ap.inversion), 0) : 0;
+
+        const projection = [capital];
+        for (let i = 1; i <= months; i++) {
+            const newCapital = projection[i - 1] * (1 + roiMensual);
+            projection.push(newCapital);
+        }
+
+        const resultsDiv = document.getElementById('projResults');
+        const finalCapital = projection[projection.length - 1];
+        const gananciasProyectadas = finalCapital - capital;
+        const roiTotal = (gananciasProyectadas / capital) * 100;
+
+        resultsDiv.innerHTML = `
+            <div class="proj-result">
+                <div class="result-item">
+                    <span>Capital Inicial:</span>
+                    <strong>${formatearPlata.format(capital)}</strong>
+                </div>
+                <div class="result-item">
+                    <span>Capital Proyectado (${months} meses):</span>
+                    <strong style="color: #4CAF50">${formatearPlata.format(finalCapital)}</strong>
+                </div>
+                <div class="result-item">
+                    <span>Ganancias Proyectadas:</span>
+                    <strong style="color: #ffb300">${formatearPlata.format(gananciasProyectadas)}</strong>
+                </div>
+                <div class="result-item" style="border-top: 1px solid #333; padding-top: 0.8rem; margin-top: 0.8rem;">
+                    <span>ROI Mensual Promedio:</span>
+                    <strong>${(roiMensual * 100).toFixed(2)}%</strong>
+                </div>
+            </div>
+        `;
+
+        // Gráfico
+        actualizarGraficoProyecciones(projection, months);
+    });
+
+    function actualizarGraficoProyecciones(projection, months) {
+        const canvas = document.getElementById('projectionChart');
+        if (!canvas) return;
+
+        const labels = Array.from({length: months + 1}, (_, i) => i === 0 ? 'Hoy' : `Mes ${i}`);
+
+        if (projectionChart) projectionChart.destroy();
+
+        const ctx = canvas.getContext('2d');
+        projectionChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Capital Proyectado ($)',
+                    data: projection,
+                    borderColor: '#ffb300',
+                    backgroundColor: 'rgba(255, 179, 0, 0.1)',
+                    pointBackgroundColor: '#ffb300',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        grid: { color: '#333' },
+                        ticks: {
+                            color: '#ccc',
+                            callback: (v) => '$' + v.toFixed(0)
+                        }
                     },
-                    plugins: { 
-                        legend: { labels: { color: '#fff' } },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) { label += ': '; }
-                                    if (context.parsed.y !== null) {
-                                        label += formatearPlata.format(context.parsed.y);
-                                    }
-                                    return label;
+                    x: { grid: { display: false }, ticks: { color: '#ccc' } }
+                },
+                plugins: {
+                    legend: { labels: { color: '#fff' } },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => `${ctx.dataset.label}: ${formatearPlata.format(ctx.parsed.y)}`
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // ===== TABS =====
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            e.target.classList.add('active');
+            const tabId = e.target.dataset.tab;
+            document.getElementById(tabId).classList.add('active');
+
+            // Actualizar datos cuando se abre tab
+            if (tabId === 'tendencias') actualizarTendencias();
+            if (tabId === 'comparativa') actualizarComparativa();
+            if (tabId === 'kelly') actualizarKelly();
+        });
+    });
+
+    // ===== MÉTRICAS ORIGINALES =====
+    function actualizarKpis() {
+        const totalApostado = apuestas.reduce((acc, ap) => acc + parseFloat(ap.inversion), 0);
+        const apuestasResueltas = apuestas.filter(ap => ap.estado === 'ganada' || ap.estado === 'perdida');
+        const apuestasPendientes = apuestas.filter(ap => ap.estado === 'pendiente').length;
+        const gananciaNeta = apuestasResueltas.reduce((acc, ap) => acc + obtenerBalanceApuesta(ap), 0);
+
+        kpiAcierto.textContent = `${apuestasResueltas.length}`;
+        kpiRoi.textContent = `${apuestasPendientes}`;
+        kpiApostado.textContent = formatearPlata.format(totalApostado);
+        kpiNeto.textContent = `${gananciaNeta >= 0 ? '+' : '-'}${formatearPlata.format(Math.abs(gananciaNeta))}`;
+
+        kpiAcierto.classList.remove('kpi-positive', 'kpi-negative');
+        kpiRoi.classList.remove('kpi-positive', 'kpi-negative');
+        kpiNeto.classList.toggle('kpi-positive', gananciaNeta >= 0);
+        kpiNeto.classList.toggle('kpi-negative', gananciaNeta < 0);
+    }
+
+    function actualizarTotalGlobal() {
+        const totalGlobal = apuestas.reduce((acumulado, ap) => {
+            return acumulado + obtenerBalanceApuesta(ap);
+        }, 0);
+
+        globalTotalAmount.textContent = formatearPlata.format(totalGlobal);
+        globalTotalCard.classList.remove('total-positive', 'total-negative');
+        globalTotalCard.classList.add(totalGlobal >= 0 ? 'total-positive' : 'total-negative');
+        globalTotalIcon.textContent = totalGlobal >= 0 ? '+' : '-';
+    }
+
+    function actualizarGraficos() {
+        const balancePorDia = {};
+
+        ordenarApuestasPorFecha(apuestas).forEach(ap => {
+            if(!balancePorDia[ap.fecha]) balancePorDia[ap.fecha] = 0;
+            balancePorDia[ap.fecha] += obtenerBalanceApuesta(ap);
+        });
+
+        const fechas = Object.keys(balancePorDia);
+        const balances = Object.values(balancePorDia);
+        const colores = balances.map(b => b >= 0 ? 'rgba(76, 175, 80, 0.8)' : 'rgba(211, 47, 47, 0.8)');
+
+        if(balanceChart) balanceChart.destroy();
+
+        balanceChart = new Chart(balanceCtx, {
+            type: 'bar',
+            data: {
+                labels: fechas,
+                datasets: [{
+                    label: 'Balance Neto Diario ($)',
+                    data: balances,
+                    backgroundColor: colores,
+                    borderColor: '#1a1a1a',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        grid: { color: '#333' }, 
+                        ticks: { color: '#ccc', callback: (v) => '$' + v }
+                    },
+                    x: { grid: { display: false }, ticks: { color: '#ccc' } }
+                },
+                plugins: { 
+                    legend: { labels: { color: '#fff' } },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => {
+                                let label = ctx.dataset.label || '';
+                                if (label) label += ': ';
+                                if (ctx.parsed.y !== null) {
+                                    label += formatearPlata.format(ctx.parsed.y);
                                 }
+                                return label;
                             }
                         }
                     }
                 }
-            });
+            }
+        });
 
-            const balanceAcumulado = [];
-            let acumulado = 0;
-            balances.forEach(balanceDia => {
-                acumulado += balanceDia;
-                balanceAcumulado.push(acumulado);
-            });
+        const balanceAcumulado = [];
+        let acumulado = 0;
+        balances.forEach(balanceDia => {
+            acumulado += balanceDia;
+            balanceAcumulado.push(acumulado);
+        });
 
-            if (cumulativeChart) cumulativeChart.destroy();
+        if (cumulativeChart) cumulativeChart.destroy();
 
-            cumulativeChart = new Chart(cumulativeCtx, {
-                type: 'line',
-                data: {
-                    labels: fechas,
-                    datasets: [{
-                        label: 'Bankroll Acumulado ($)',
-                        data: balanceAcumulado,
-                        borderColor: '#ffca28',
-                        backgroundColor: 'rgba(255, 202, 40, 0.25)',
-                        pointBackgroundColor: '#ffca28',
-                        pointBorderColor: '#1a1a1a',
-                        tension: 0.25,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            grid: { color: '#333' },
-                            ticks: {
-                                color: '#ccc',
-                                callback: function(value) {
-                                    return '$' + value;
-                                }
-                            }
-                        },
-                        x: { grid: { display: false }, ticks: { color: '#ccc' } }
+        cumulativeChart = new Chart(cumulativeCtx, {
+            type: 'line',
+            data: {
+                labels: fechas,
+                datasets: [{
+                    label: 'Bankroll Acumulado ($)',
+                    data: balanceAcumulado,
+                    borderColor: '#ffca28',
+                    backgroundColor: 'rgba(255, 202, 40, 0.25)',
+                    pointBackgroundColor: '#ffca28',
+                    pointBorderColor: '#1a1a1a',
+                    tension: 0.25,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        grid: { color: '#333' },
+                        ticks: { color: '#ccc', callback: (v) => '$' + v }
                     },
-                    plugins: {
-                        legend: { labels: { color: '#fff' } },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) { label += ': '; }
-                                    if (context.parsed.y !== null) {
-                                        label += formatearPlata.format(context.parsed.y);
-                                    }
-                                    return label;
+                    x: { grid: { display: false }, ticks: { color: '#ccc' } }
+                },
+                plugins: {
+                    legend: { labels: { color: '#fff' } },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => {
+                                let label = ctx.dataset.label || '';
+                                if (label) label += ': ';
+                                if (ctx.parsed.y !== null) {
+                                    label += formatearPlata.format(ctx.parsed.y);
                                 }
+                                return label;
                             }
                         }
                     }
                 }
-            });
-        }
+            }
+        });
+    }
 
-        actualizarLista();
-        actualizarKpis();
-        actualizarTotalGlobal();
-        actualizarGrafico();
-    </script>
+    // ===== INICIALIZACIÓN =====
+    actualizarTabla();
+    actualizarKpis();
+    actualizarTotalGlobal();
+    actualizarGraficos();
+    actualizarTendencias();
+</script>
 </body>
 </html>

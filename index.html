@@ -15,67 +15,139 @@
     <meta name="twitter:description" content="Fijas diarias, data pura y seguimiento real del rendimiento.">
     <meta name="twitter:image" content="og-cover.svg">
     
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     <link rel="stylesheet" href="styles.css">
+    <script src="datos.js"></script>
+    <script>
+        // Cargar tema antes de renderizar para evitar flash
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
 </head>
-<body>
+<body class="index-page">
     
     <nav class="navbar" data-aos="fade-down" data-aos-duration="800">
         <div class="logo">👁️ EL OJO DEL DT</div>
         <ul class="nav-links">
             <li><a href="#">Inicio</a></li>
-            <li class="dropdown">
-                <a href="#" class="dropbtn">Fijas Diarias ▼</a>
-                <div class="dropdown-content">
-                    <a href="12-3.html">12/03 - LPF</a>
-                    <a href="13-3.html">13/03 - LPF</a>
-                </div>
-            </li>
+            <li><a href="fijas.html">Fijas</a></li>
             <li><a href="historial.html">Historial</a></li>
+            <li><button id="themeToggle" class="theme-toggle" title="Cambiar tema">🌙</button></li>
         </ul>
     </nav>
 
-    <header class="hero-landing">
-        <div class="hero-content" data-aos="zoom-in" data-aos-duration="1000">
-            <div class="badge">🔥 Análisis Táctico & Estadísticas</div>
-            <h1>EL FÚTBOL SE MIRA,<br><span class="highlight-red">LAS BOLETAS SE GANAN.</span></h1>
-            <p>Dejá de regalarle plata al casino adivinando resultados. Sumate a la pizarra del DT con más mística de la LPF y Europa.</p>
-            <a href="13-3.html" class="btn-primary">VER LAS FIJAS DE HOY 🎯</a>
+    <header class="home-hero">
+        <div class="home-hero-grid">
+            <div class="home-hero-copy" data-aos="fade-right" data-aos-duration="950">
+                <span class="home-kicker">LAB DE SCOUTING FUTBOLERO</span>
+                <h1>El futbol se mira<br>LAS BOLETAS<br><span>SE GANAN</span></h1>
+                <p>El Ojo del DT transforma caos en lectura: contexto táctico, mercado y timing. Entrás con plan, no con ansiedad.</p>
+                <div class="home-cta-row">
+                    <a href="fijas.html" class="home-btn home-btn-primary">Ir a Fijas</a>
+                    <a href="historial.html" class="home-btn home-btn-ghost">Ver Historial</a>
+                </div>
+                <div class="home-live-tag">Actualizado: <strong id="homeTodayDate">Hoy</strong></div>
+            </div>
+
+            <div class="home-hero-panel" data-aos="fade-left" data-aos-duration="950">
+                <article class="home-panel-card">
+                    <span class="home-panel-label">Volumen Operado</span>
+                    <strong class="home-panel-value" id="homeTotalTickets" data-counter="173">0</strong>
+                    <span class="home-panel-sub">tickets registrados</span>
+                </article>
+                <article class="home-panel-card">
+                    <span class="home-panel-label">Modo de Juego</span>
+                    <strong class="home-panel-value home-text-accent">Data + Timing</strong>
+                    <span class="home-panel-sub">sin humo ni fantasmeo</span>
+                </article>
+                <article class="home-panel-card">
+                    <span class="home-panel-label">Ultimo Estado</span>
+                    <strong class="home-panel-value home-text-warning" id="homeLastStatus">Cargando...</strong>
+                    <span class="home-panel-sub" id="homeLastDate">actualizando tablero</span>
+                </article>
+            </div>
+        </div>
+
+        <div class="home-ticker-wrap" data-aos="fade-up" data-aos-delay="120">
+            <div class="home-ticker-track">
+                <span>SCOUTING TACTICO</span>
+                <span>RIESGO CONTROLADO</span>
+                <span>HISTORIAL ABIERTO</span>
+                <span>ANALISIS EN VIVO</span>
+                <span>SCOUTING TACTICO</span>
+                <span>RIESGO CONTROLADO</span>
+                <span>HISTORIAL ABIERTO</span>
+                <span>ANALISIS EN VIVO</span>
+            </div>
         </div>
     </header>
 
-    <section class="features-section">
-        <h2 data-aos="fade-up">¿CÓMO JUEGA EL DT?</h2>
-        <div class="features-grid">
-            
-            <div class="feature-box" data-aos="fade-up" data-aos-delay="100">
-                <div class="icon">!</div>
-                <h3>Data Pura</h3>
-                <p>Nada de corazonadas. Analizamos córners, tarjetas, tiros al arco y posesión. Opta Data directo a tu boleta.</p>
-            </div>
-
-            <div class="feature-box" data-aos="fade-up" data-aos-delay="200">
-                <div class="icon">$</div>
-                <h3>Cuotas de Valor</h3>
-                <p>Buscamos el error de la casa de apuestas. Combinadas pensadas para multiplicar el bank sin arriesgar a lo pelotudo.</p>
-            </div>
-
-            <div class="feature-box" data-aos="fade-up" data-aos-delay="300">
-                <div class="icon">X</div>
-                <h3>Cero Humo</h3>
-                <p>Las ganadas se festejan, las perdidas se asumen. Acá no borramos historial. Transparencia total con la comunidad.</p>
-            </div>
-
+    <section class="home-lab" data-aos="fade-up">
+        <div class="home-section-head">
+            <h2>Como opera el DT</h2>
+            <p>Un circuito corto y agresivo para decidir mejor que el mercado promedio.</p>
+        </div>
+        <div class="home-lab-grid">
+            <article class="home-lab-card" data-aos="zoom-in" data-aos-delay="80">
+                <span class="home-step">Paso 01</span>
+                <h3>Lectura de ritmo</h3>
+                <p>Detectamos choques de estilos, secuencias de presión y ventanas de gol antes de que la cuota reaccione.</p>
+            </article>
+            <article class="home-lab-card" data-aos="zoom-in" data-aos-delay="160">
+                <span class="home-step">Paso 02</span>
+                <h3>Filtro de mercado</h3>
+                <p>Comparamos mercados para evitar entradas por emoción y quedarnos solo con setups de mejor relación riesgo-retorno.</p>
+            </article>
+            <article class="home-lab-card" data-aos="zoom-in" data-aos-delay="240">
+                <span class="home-step">Paso 03</span>
+                <h3>Ejecución y control</h3>
+                <p>Stake calibrado, seguimiento vivo y salida táctica cuando el guion del partido cambia.</p>
+            </article>
         </div>
     </section>
 
-    <section class="cta-telegram" data-aos="fade-up" data-aos-duration="800">
-        <h2>ENTRÁ AL VESTUARIO</h2>
-        <p>Seguinos en Instagram para el análisis en vivo y encuestas de la fecha.</p>
-        <a href="https://www.instagram.com/elojodeldt/" class="btn-secondary" target="_blank">IR A INSTAGRAM</a>
+    <section class="home-proof" data-aos="fade-up" data-aos-duration="900">
+        <article class="home-proof-card">
+            <h3>Tablero de hoy</h3>
+            <p>Entradas activas, picks pendientes y foco de partido en un click.</p>
+            <a href="fijas.html">Abrir Fijas</a>
+        </article>
+        <article class="home-proof-card">
+            <h3>Bitacora completa</h3>
+            <p>Ganadas, perdidas y pendientes visibles sin maquillaje.</p>
+            <a href="historial.html">Ver Historial</a>
+        </article>
+        <article class="home-proof-card">
+            <h3>Comunidad en vivo</h3>
+            <p>Alertas, contexto y lectura de fecha en tiempo real.</p>
+            <a href="https://www.instagram.com/elojodeldt/" target="_blank" rel="noopener noreferrer">Instagram</a>
+        </article>
+    </section>
+
+    <section class="home-live-feed" data-aos="fade-up" data-aos-duration="1000">
+        <div class="home-section-head">
+            <h2>Feed en Vivo</h2>
+            <p>Ultimos resultados reales inyectados desde la base del proyecto.</p>
+        </div>
+        <div class="home-live-shell">
+            <div class="home-live-header">
+                <span class="home-live-pill">Live Data</span>
+                <span class="home-live-note">Origen: datos.js</span>
+            </div>
+            <ul class="home-live-list" id="homeLiveList">
+            </ul>
+        </div>
+    </section>
+
+    <section class="home-final-cta" data-aos="zoom-in-up">
+        <h2>Si vas a jugar, jugá con plan</h2>
+        <p>Entrá al radar del dia y operá con cabeza fría.</p>
+        <a href="fijas.html" class="home-btn home-btn-primary">Entrar al Radar</a>
     </section>
 
     <section class="legal-banner">
@@ -89,9 +161,104 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({
-            once: true, /* La animación ocurre solo una vez al scrollear */
-            offset: 100 /* Distancia en px desde abajo para que arranque */
+            once: true,
+            offset: 100
         });
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const htmlElement = document.documentElement;
+        
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            themeToggle.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+
+        // Actualizar icono inicial
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+        const todayElement = document.getElementById('homeTodayDate');
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        if (todayElement) {
+            todayElement.textContent = `${dd}/${mm}`;
+        }
+
+        function animateCounter(node, target) {
+            if (!node || !Number.isFinite(target)) return;
+            let current = 0;
+            const step = Math.max(1, Math.ceil(target / 60));
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    node.textContent = String(target);
+                    clearInterval(timer);
+                } else {
+                    node.textContent = String(current);
+                }
+            }, 16);
+        }
+
+        const counters = document.querySelectorAll('[data-counter]');
+        counters.forEach((node) => {
+            const target = Number(node.getAttribute('data-counter'));
+            animateCounter(node, target);
+        });
+
+        function parseFecha(fechaTexto) {
+            const [dia, mes] = fechaTexto.split('/').map((v) => parseInt(v, 10));
+            return new Date(new Date().getFullYear(), mes - 1, dia);
+        }
+
+        const totalTicketsEl = document.getElementById('homeTotalTickets');
+        const lastStatusEl = document.getElementById('homeLastStatus');
+        const lastDateEl = document.getElementById('homeLastDate');
+        const liveListEl = document.getElementById('homeLiveList');
+
+        if (typeof historialApuestas !== 'undefined' && Array.isArray(historialApuestas)) {
+            const ordered = [...historialApuestas]
+                .sort((a, b) => parseFecha(b.fecha) - parseFecha(a.fecha));
+
+            if (totalTicketsEl) {
+                totalTicketsEl.setAttribute('data-counter', String(ordered.length));
+                totalTicketsEl.textContent = '0';
+                animateCounter(totalTicketsEl, ordered.length);
+            }
+
+            const latest = ordered.find((item) => item.estado === 'ganada' || item.estado === 'perdida') || ordered[0];
+            if (latest && lastStatusEl && lastDateEl) {
+                const statusMap = {
+                    ganada: 'Ganada',
+                    perdida: 'Perdida',
+                    pendiente: 'Pendiente'
+                };
+                lastStatusEl.textContent = statusMap[latest.estado] || 'Activo';
+                lastDateEl.textContent = `fecha ${latest.fecha}`;
+            }
+
+            if (liveListEl) {
+                const recentResolved = ordered.filter((item) => item.estado === 'ganada' || item.estado === 'perdida');
+                const recent = (recentResolved.length ? recentResolved : ordered).slice(0, 7);
+                liveListEl.innerHTML = recent.map((apuesta) => {
+                    const estado = apuesta.estado || 'pendiente';
+                    const estadoLabel = estado === 'ganada' ? 'GANADA' : estado === 'perdida' ? 'PERDIDA' : 'PENDIENTE';
+                    const estadoClass = estado === 'ganada' ? 'is-win' : estado === 'perdida' ? 'is-loss' : 'is-pending';
+                    return `
+                        <li class="home-live-item ${estadoClass}">
+                            <span class="home-live-date">${apuesta.fecha}</span>
+                            <span class="home-live-odd">Cuota ${apuesta.cuota}</span>
+                            <span class="home-live-stake">$${Number(apuesta.inversion).toLocaleString('es-AR')}</span>
+                            <span class="home-live-status">${estadoLabel}</span>
+                        </li>
+                    `;
+                }).join('');
+            }
+        }
     </script>
 </body>
 </html>
