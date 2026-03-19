@@ -1770,11 +1770,50 @@ html[data-theme="light"] .historial-page .tab-btn.active {
 
 /* ===== INDEX PREMIUM SYSTEM ===== */
 .index-page {
+    --mx: 50%;
+    --my: 30%;
     font-family: 'Sora', sans-serif;
     background:
         radial-gradient(circle at 10% -5%, rgba(255, 94, 77, 0.2), transparent 32%),
         radial-gradient(circle at 90% 5%, rgba(255, 196, 71, 0.16), transparent 28%),
         #07080b;
+    position: relative;
+}
+
+.home-scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    z-index: 1200;
+    background: linear-gradient(90deg, #00d4ff 0%, #ff6f47 52%, #ffd56a 100%);
+    box-shadow: 0 0 14px rgba(0, 212, 255, 0.6);
+    transition: width 0.08s linear;
+}
+
+.home-bg-glow,
+.home-bg-grid {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+}
+
+.home-bg-glow {
+    background:
+        radial-gradient(circle at var(--mx) var(--my), rgba(255, 123, 93, 0.17), rgba(255, 123, 93, 0) 35%),
+        radial-gradient(circle at calc(var(--mx) - 18%) calc(var(--my) + 12%), rgba(0, 208, 195, 0.13), rgba(0, 208, 195, 0) 32%);
+    transition: background 0.15s ease;
+}
+
+.home-bg-grid {
+    opacity: 0.2;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+    background-size: 36px 36px;
+    mask-image: radial-gradient(circle at center, black 18%, transparent 80%);
 }
 
 .index-page .logo,
@@ -1822,6 +1861,38 @@ html[data-theme="light"] .historial-page .tab-btn.active {
     bottom: -210px;
     border-radius: 50%;
     background: radial-gradient(circle, rgba(255, 124, 95, 0.25) 0%, rgba(255, 124, 95, 0) 72%);
+}
+
+.home-float-tags {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.home-float-tags span {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #d4e5f8;
+    border: 1px solid #3e4f66;
+    border-radius: 999px;
+    padding: 0.15rem 0.55rem;
+    background: rgba(255, 255, 255, 0.04);
+    animation: tagFloat 3.8s ease-in-out infinite;
+}
+
+.home-float-tags span:nth-child(2) {
+    animation-delay: 0.5s;
+}
+
+.home-float-tags span:nth-child(3) {
+    animation-delay: 1s;
+}
+
+@keyframes tagFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
 }
 
 .home-kicker {
@@ -1913,12 +1984,13 @@ html[data-theme="light"] .historial-page .tab-btn.active {
     display: grid;
     align-content: center;
     gap: 0.25rem;
-    transition: transform 0.22s ease, border-color 0.22s ease;
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
 }
 
 .home-panel-card:hover {
     transform: translateY(-3px);
     border-color: #4f6f8a;
+    box-shadow: 0 12px 22px rgba(0, 0, 0, 0.26);
 }
 
 .home-panel-label {
@@ -2130,6 +2202,12 @@ html[data-theme="light"] .historial-page .tab-btn.active {
     background: rgba(255, 255, 255, 0.02);
     padding: 0.55rem 0.7rem;
     font-size: 0.86rem;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.home-live-item:hover {
+    transform: translateY(-2px);
+    border-color: #50698b;
 }
 
 .home-live-date {
@@ -2188,6 +2266,13 @@ html[data-theme="light"] .index-page {
         #f2f5fb;
 }
 
+    html[data-theme="light"] .home-bg-grid {
+        opacity: 0.28;
+        background-image:
+        linear-gradient(rgba(31, 62, 88, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31, 62, 88, 0.12) 1px, transparent 1px);
+    }
+
 html[data-theme="light"] .index-page .navbar {
     background: rgba(255, 255, 255, 0.86);
     border-bottom-color: #d6dce8;
@@ -2216,6 +2301,12 @@ html[data-theme="light"] .index-page .home-live-note {
 html[data-theme="light"] .index-page .home-live-odd,
 html[data-theme="light"] .index-page .home-live-stake {
     color: #4d6073;
+}
+
+html[data-theme="light"] .index-page .home-float-tags span {
+    color: #334f6a;
+    border-color: #c5d8ea;
+    background: #f5fbff;
 }
 
 html[data-theme="light"] .index-page .home-hero h1,
@@ -2286,5 +2377,24 @@ html[data-theme="light"] .index-page .home-live-tag {
     .home-live-stake,
     .home-live-status {
         justify-self: start;
+    }
+
+    .home-bg-grid {
+        background-size: 28px 28px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .home-ticker-track,
+    .home-float-tags span {
+        animation: none !important;
+    }
+
+    .home-panel-card,
+    .home-lab-card,
+    .home-proof-card,
+    .home-live-item,
+    .home-btn {
+        transition: none !important;
     }
 }

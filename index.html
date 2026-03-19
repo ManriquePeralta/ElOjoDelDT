@@ -30,6 +30,9 @@
     </script>
 </head>
 <body class="index-page">
+    <div class="home-scroll-progress" id="homeScrollProgress"></div>
+    <div class="home-bg-glow" aria-hidden="true"></div>
+    <div class="home-bg-grid" aria-hidden="true"></div>
     
     <nav class="navbar" data-aos="fade-down" data-aos-duration="800">
         <div class="logo">👁️ EL OJO DEL DT</div>
@@ -47,6 +50,11 @@
                 <span class="home-kicker">LAB DE SCOUTING FUTBOLERO</span>
                 <h1>El futbol se mira<br>LAS BOLETAS<br><span>SE GANAN</span></h1>
                 <p>El Ojo del DT transforma caos en lectura: contexto táctico, mercado y timing. Entrás con plan, no con ansiedad.</p>
+                <div class="home-float-tags" aria-hidden="true">
+                    <span>Momentum</span>
+                    <span>Lectura</span>
+                    <span>Timing</span>
+                </div>
                 <div class="home-cta-row">
                     <a href="fijas.html" class="home-btn home-btn-primary">Ir a Fijas</a>
                     <a href="historial.html" class="home-btn home-btn-ghost">Ver Historial</a>
@@ -55,17 +63,17 @@
             </div>
 
             <div class="home-hero-panel" data-aos="fade-left" data-aos-duration="950">
-                <article class="home-panel-card">
+                <article class="home-panel-card home-tilt-card">
                     <span class="home-panel-label">Volumen Operado</span>
                     <strong class="home-panel-value" id="homeTotalTickets" data-counter="173">0</strong>
                     <span class="home-panel-sub">tickets registrados</span>
                 </article>
-                <article class="home-panel-card">
+                <article class="home-panel-card home-tilt-card">
                     <span class="home-panel-label">Modo de Juego</span>
                     <strong class="home-panel-value home-text-accent">Data + Timing</strong>
                     <span class="home-panel-sub">sin humo ni fantasmeo</span>
                 </article>
-                <article class="home-panel-card">
+                <article class="home-panel-card home-tilt-card">
                     <span class="home-panel-label">Ultimo Estado</span>
                     <strong class="home-panel-value home-text-warning" id="homeLastStatus">Cargando...</strong>
                     <span class="home-panel-sub" id="homeLastDate">actualizando tablero</span>
@@ -93,17 +101,17 @@
             <p>Un circuito corto y agresivo para decidir mejor que el mercado promedio.</p>
         </div>
         <div class="home-lab-grid">
-            <article class="home-lab-card" data-aos="zoom-in" data-aos-delay="80">
+            <article class="home-lab-card home-tilt-card" data-aos="zoom-in" data-aos-delay="80">
                 <span class="home-step">Paso 01</span>
                 <h3>Lectura de ritmo</h3>
                 <p>Detectamos choques de estilos, secuencias de presión y ventanas de gol antes de que la cuota reaccione.</p>
             </article>
-            <article class="home-lab-card" data-aos="zoom-in" data-aos-delay="160">
+            <article class="home-lab-card home-tilt-card" data-aos="zoom-in" data-aos-delay="160">
                 <span class="home-step">Paso 02</span>
                 <h3>Filtro de mercado</h3>
                 <p>Comparamos mercados para evitar entradas por emoción y quedarnos solo con setups de mejor relación riesgo-retorno.</p>
             </article>
-            <article class="home-lab-card" data-aos="zoom-in" data-aos-delay="240">
+            <article class="home-lab-card home-tilt-card" data-aos="zoom-in" data-aos-delay="240">
                 <span class="home-step">Paso 03</span>
                 <h3>Ejecución y control</h3>
                 <p>Stake calibrado, seguimiento vivo y salida táctica cuando el guion del partido cambia.</p>
@@ -112,17 +120,17 @@
     </section>
 
     <section class="home-proof" data-aos="fade-up" data-aos-duration="900">
-        <article class="home-proof-card">
+        <article class="home-proof-card home-tilt-card">
             <h3>Tablero de hoy</h3>
             <p>Entradas activas, picks pendientes y foco de partido en un click.</p>
             <a href="fijas.html">Abrir Fijas</a>
         </article>
-        <article class="home-proof-card">
+        <article class="home-proof-card home-tilt-card">
             <h3>Bitacora completa</h3>
             <p>Ganadas, perdidas y pendientes visibles sin maquillaje.</p>
             <a href="historial.html">Ver Historial</a>
         </article>
-        <article class="home-proof-card">
+        <article class="home-proof-card home-tilt-card">
             <h3>Comunidad en vivo</h3>
             <p>Alertas, contexto y lectura de fecha en tiempo real.</p>
             <a href="https://www.instagram.com/elojodeldt/" target="_blank" rel="noopener noreferrer">Instagram</a>
@@ -259,6 +267,38 @@
                 }).join('');
             }
         }
+
+        const progressBar = document.getElementById('homeScrollProgress');
+        window.addEventListener('scroll', () => {
+            if (!progressBar) return;
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+        });
+
+        document.addEventListener('pointermove', (event) => {
+            const x = (event.clientX / window.innerWidth) * 100;
+            const y = (event.clientY / window.innerHeight) * 100;
+            document.body.style.setProperty('--mx', `${x}%`);
+            document.body.style.setProperty('--my', `${y}%`);
+        });
+
+        const tiltCards = document.querySelectorAll('.home-tilt-card');
+        tiltCards.forEach((card) => {
+            card.addEventListener('mousemove', (event) => {
+                const rect = card.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                const rx = ((y / rect.height) - 0.5) * -6;
+                const ry = ((x / rect.width) - 0.5) * 8;
+                card.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
     </script>
 </body>
 </html>
